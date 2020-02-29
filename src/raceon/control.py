@@ -5,14 +5,11 @@ import rospy
 from std_msgs.msg import Bool
 from geometry_msgs.msg import Pose
 from raceon.msg import AckermannDrive
-import time
 
 SERVO_MIN = -900
 SERVO_MIDDLE = 0
 SERVO_MAX = 900
-time_old = 0
-time_new = 0
-integral = 0
+
 class Controller():
     
     def __init__(self):
@@ -27,7 +24,6 @@ class Controller():
 
         # Manual mode
         self.manual_mode = False
-		
     
     def start(self):
         self.sub_pos = rospy.Subscriber(self.topic_name_pos, Pose, self.pos_callback)
@@ -52,7 +48,7 @@ class Controller():
             rospy.loginfo("Current error: pos = {:.2f}".format(pos_err))
             
             servo_pos = self.control_servo(pos_err)
-			motor_speed = self.motor_speed if servo_pos == 0 else self.motor_speed+20
+            motor_speed = self.motor_speed
             
             rospy.loginfo("Control command: servo_pos = " + str(servo_pos) + ", motor_speed = " + str(motor_speed))
             
@@ -63,15 +59,9 @@ class Controller():
         
     # TODO: Implement PID
     def pid(self, error):
-		timeChange = time_new - time_old
-		integral = integral + error * (timeChange * 0.001)
-		kid = (lasterror - error) * timeChange * 0.001
-        return error * self.kp + (-self.kd * kid) + self.ki * integral
+        return error * self.kp
 
     def control_servo(self, error):
-		if time_old == 0:
-			time_old = time.time()
-		time_new = time.time()
         correction = self.pid(error)
         servo_pos = SERVO_MIDDLE + correction
 

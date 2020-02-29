@@ -1,6 +1,7 @@
 <launch>
     <arg name="speed" default="0"/>
     <arg name="publish_raw" default="false"/>
+	
     
     <arg name="kp" default="10" />
     <arg name="ki" default="0" />
@@ -22,7 +23,7 @@
         </node>
 
         <node pkg="raceon" name="pos_estimation" type="pos_estimation.py" output="log">
-            <param name="~scan_line" value="190" />
+            <param name="~scan_line" value="180" />
             <param name="~peak_threshold" value="170" />
             <param name="~track_width" value="500" />
             <param name="~camera_center" value="320" />
